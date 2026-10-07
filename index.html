@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080b14">
+<title>Viral 3D Secret Emoji Text Tool</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+  --bg:#070a12;
+  --panel:rgba(17,23,38,.72);
+  --panel2:rgba(10,15,27,.88);
+  --cyan:#27e8ff;
+  --purple:#9b5cff;
+  --pink:#ff4fd8;
+  --green:#39f5a6;
+  --text:#f5f7ff;
+  --muted:#8e98ae;
+  --border:rgba(255,255,255,.09);
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(39,232,255,.15),transparent 34%),
+    radial-gradient(circle at 100% 40%,rgba(155,92,255,.12),transparent 32%),
+    linear-gradient(145deg,#05070d,#0a0e19 55%,#05070d);
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.25;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+.container{
+  width:min(1080px,94%);
+  margin:auto;
+  padding:24px 0 50px;
+}
+
+/* ---------- HEADER ---------- */
+
+.hero{
+  text-align:center;
+  padding:12px 0 28px;
+}
+
+.emoji-stage{
+  position:relative;
+  width:180px;
+  height:190px;
+  margin:0 auto 8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  perspective:700px;
+}
+
+.main-emoji{
+  font-size:100px;
+  line-height:1;
+  filter:
+    drop-shadow(0 12px 10px rgba(0,0,0,.5))
+    drop-shadow(0 0 22px rgba(39,232,255,.22));
+  transform-style:preserve-3d;
+  animation:
+    emojiFloat 2.5s ease-in-out infinite,
+    emojiPop 2.5s ease-in-out infinite;
+  user-select:none;
+}
+
+.emoji-shadow{
+  position:absolute;
+  bottom:20px;
+  width:90px;
+  height:20px;
+  border-radius:50%;
+  background:rgba(0,0,0,.45);
+  filter:blur(12px);
+  animation:shadowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes emojiFloat{
+  0%,100%{transform:translateY(4px) rotateX(-3deg) rotateY(-6deg)}
+  50%{transform:translateY(-25px) rotateX(7deg) rotateY(8deg)}
+}
+
+@keyframes emojiPop{
+  0%,100%{scale:1}
+  50%{scale:1.09}
+}
+
+@keyframes shadowPulse{
+  0%,100%{transform:scaleX(1);opacity:.55}
+  50%{transform:scaleX(.65);opacity:.25}
+}
+
+h1{
+  margin:4px 0 8px;
+  font-size:clamp(28px,5vw,48px);
+  font-weight:900;
+  letter-spacing:-1.8px;
+  background:linear-gradient(90deg,#fff,var(--cyan),#fff,var(--purple));
+  background-size:250% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:titleGlow 6s linear infinite;
+}
+
+@keyframes titleGlow{
+  to{background-position:250% center}
+}
+
+.subtitle{
+  max-width:680px;
+  margin:auto;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+}
+
+.choose-btn{
+  margin-top:18px;
+  border:1px solid rgba(39,232,255,.25);
+  color:#eaffff;
+  background:linear-gradient(135deg,rgba(39,232,255,.12),rgba(155,92,255,.12));
+  padding:12px 20px;
+  border-radius:15px;
+  cursor:pointer;
+  font-weight:800;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.08),
+    0 8px 30px rgba(39,232,255,.08);
+  transition:.25s;
+}
+
+.choose-btn:hover{
+  transform:translateY(-2px);
+  border-color:rgba(39,232,255,.6);
+  box-shadow:0 10px 35px rgba(39,232,255,.18);
+}
+
+.choose-btn:active{
+  transform:scale(.97);
+}
+
+/* ---------- LAYOUT ---------- */
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.panel{
+  position:relative;
+  overflow:hidden;
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:25px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.015)),
+    var(--panel);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.3),
+    inset 0 1px rgba(255,255,255,.07);
+}
+
+.panel::before{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  right:-100px;
+  top:-100px;
+  background:var(--cyan);
+  opacity:.06;
+  filter:blur(50px);
+  border-radius:50%;
+}
+
+.panel-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.panel-icon{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:rgba(39,232,255,.09);
+  border:1px solid rgba(39,232,255,.18);
+  font-size:19px;
+}
+
+.panel h2{
+  margin:0;
+  font-size:19px;
+}
+
+.panel p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+textarea,
+.code-input{
+  width:100%;
+  border:1px solid rgba(255,255,255,.08);
+  outline:none;
+  color:#fff;
+  background:rgba(0,0,0,.27);
+  border-radius:17px;
+  padding:16px;
+  font:inherit;
+  resize:vertical;
+  transition:.25s;
+}
+
+textarea{
+  min-height:175px;
+}
+
+.code-input{
+  min-height:70px;
+  resize:none;
+  font-weight:800;
+  font-size:18px;
+  letter-spacing:.5px;
+}
+
+textarea::placeholder,
+.code-input::placeholder{
+  color:#667087;
+}
+
+textarea:focus,
+.code-input:focus{
+  border-color:rgba(39,232,255,.6);
+  box-shadow:0 0 0 4px rgba(39,232,255,.07),0 0 30px rgba(39,232,255,.08);
+}
+
+.action-row{
+  display:flex;
+  gap:10px;
+  margin-top:13px;
+}
+
+.btn{
+  flex:1;
+  border:0;
+  border-radius:15px;
+  padding:14px 15px;
+  cursor:pointer;
+  color:#041017;
+  font-weight:900;
+  font-size:14px;
+  background:linear-gradient(135deg,var(--cyan),#82f5ff);
+  box-shadow:
+    0 8px 25px rgba(39,232,255,.18),
+    inset 0 1px rgba(255,255,255,.7);
+  transition:.22s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 35px rgba(39,232,255,.28);
+}
+
+.btn:active{
+  transform:scale(.97);
+}
+
+.btn.secondary{
+  flex:0 0 105px;
+  color:#fff;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:none;
+}
+
+.btn.secondary:hover{
+  border-color:rgba(255,255,255,.25);
+}
+
+.copy-row{
+  display:flex;
+  gap:9px;
+  margin-top:12px;
+}
+
+.copy-box{
+  flex:1;
+  padding:13px;
+  border-radius:14px;
+  background:rgba(0,0,0,.35);
+  border:1px dashed rgba(39,232,255,.25);
+  color:#bffaff;
+  word-break:break-all;
+  font-family:monospace;
+  font-size:14px;
+  min-height:45px;
+}
+
+.copy-btn{
+  border:1px solid rgba(39,232,255,.3);
+  background:rgba(39,232,255,.08);
+  color:#bffaff;
+  border-radius:14px;
+  padding:0 17px;
+  cursor:pointer;
+  font-weight:800;
+  transition:.2s;
+}
+
+.copy-btn:hover{
+  background:rgba(39,232,255,.16);
+}
+
+.copy-btn.copied{
+  color:#07130f;
+  background:var(--green);
+  border-color:var(--green);
+}
+
+.status{
+  min-height:20px;
+  margin-top:10px;
+  color:var(--green);
+  font-size:12px;
+  font-weight:700;
+}
+
+.result{
+  min-height:130px;
+  margin-top:13px;
+  padding:16px;
+  border-radius:17px;
+  border:1px solid rgba(155,92,255,.2);
+  background:
+    radial-gradient(circle at 20% 0%,rgba(155,92,255,.1),transparent 45%),
+    rgba(0,0,0,.28);
+  color:#f4f0ff;
+  line-height:1.65;
+  word-break:break-word;
+  box-shadow:inset 0 0 30px rgba(155,92,255,.035);
+}
+
+.result.empty{
+  color:#69748a;
+  display:flex;
+  align-items:center;
+}
+
+/* ---------- INFO ---------- */
+
+.info{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.info-card{
+  padding:18px;
+  border-radius:18px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.025);
+}
+
+.info-card strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:13px;
+}
+
+.info-card span{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+/* ---------- EMOJI MODAL ---------- */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:15px;
+  background:rgba(0,0,0,.68);
+  backdrop-filter:blur(10px);
+}
+
+.modal.show{
+  display:flex;
+  animation:fadeIn .2s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+.emoji-tray{
+  width:min(900px,100%);
+  max-height:min(78vh,700px);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:28px 28px 18px 18px;
+  background:
+    linear-gradient(145deg,rgba(26,34,54,.97),rgba(8,12,23,.98));
+  box-shadow:0 -20px 80px rgba(0,0,0,.6);
+  animation:trayUp .28s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes trayUp{
+  from{transform:translateY(70px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+
+.tray-head{
+  padding:17px 18px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.tray-head strong{
+  font-size:17px;
+}
+
+.close{
+  width:35px;
+  height:35px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.05);
+  color:white;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.emoji-search{
+  margin:0 18px 12px;
+  width:calc(100% - 36px);
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(0,0,0,.25);
+  color:white;
+  border-radius:14px;
+  padding:12px 14px;
+  outline:none;
+}
+
+.category-bar{
+  display:flex;
+  gap:7px;
+  padding:0 18px 12px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.category-bar::-webkit-scrollbar{
+  display:none;
+}
+
+.cat{
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,.08);
+  color:#b5bfd2;
+  background:rgba(255,255,255,.04);
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:800;
+}
+
+.cat.active{
+  color:#061219;
+  background:var(--cyan);
+  border-color:var(--cyan);
+}
+
+.emoji-grid{
+  height:calc(min(78vh,700px) - 150px);
+  min-height:260px;
+  overflow:auto;
+  padding:0 18px 20px;
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  gap:8px;
+}
+
+.emoji-item{
+  aspect-ratio:1;
+  display:grid;
+  place-items:center;
+  border:1px solid transparent;
+  background:rgba(255,255,255,.035);
+  border-radius:13px;
+  font-size:29px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.emoji-item:hover{
+  transform:translateY(-3px) scale(1.08);
+  border-color:rgba(39,232,255,.35);
+  background:rgba(39,232,255,.08);
+  box-shadow:0 8px 20px rgba(39,232,255,.1);
+}
+
+.emoji-item:active{
+  transform:scale(.9);
+}
+
+/* ---------- TOAST ---------- */
+
+.toast{
+  position:fixed;
+  z-index:100;
+  left:50%;
+  bottom:24px;
+  transform:translate(-50%,20px);
+  padding:12px 18px;
+  border-radius:13px;
+  background:#151d2e;
+  border:1px solid rgba(39,232,255,.25);
+  color:#dfffff;
+  box-shadow:0 12px 40px rgba(0,0,0,.4);
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  font-size:13px;
+  font-weight:800;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:760px){
+  .container{
+    width:92%;
+    padding-top:14px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .info{
+    grid-template-columns:1fr;
+  }
+
+  .panel{
+    padding:17px;
+    border-radius:21px;
+  }
+
+  .emoji-grid{
+    grid-template-columns:repeat(7,1fr);
+  }
+
+  .emoji-item{
+    font-size:27px;
+  }
+
+  .emoji-stage{
+    height:165px;
+  }
+
+  .main-emoji{
+    font-size:86px;
+  }
+
+  .action-row{
+    flex-direction:column;
+  }
+
+  .btn.secondary{
+    flex:auto;
+    width:100%;
+  }
+
+  .copy-row{
+    flex-direction:column;
+  }
+
+  .copy-btn{
+    min-height:45px;
+  }
+}
+
+@media(max-width:390px){
+  .emoji-grid{
+    grid-template-columns:repeat(6,1fr);
+  }
+
+  h1{
+    font-size:28px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header class="hero">
+
+    <div class="emoji-stage">
+      <div class="emoji-shadow"></div>
+      <div id="mainEmoji" class="main-emoji">🥷</div>
+    </div>
+
+    <h1>Viral 3D Secret Emoji</h1>
+
+    <div class="subtitle">
+      Hide any message inside a tiny secret emoji code.
+      Pick your emoji, encode your message, copy the ultra-short payload,
+      and reveal it again whenever you need.
+    </div>
+
+    <button class="choose-btn" id="chooseEmoji">
+      ✨ Choose Emoji
+    </button>
+
+  </header>
+
+
+  <main class="grid">
+
+    <!-- ENCODE -->
+
+    <section class="panel">
+
+      <div class="panel-title">
+        <div class="panel-icon">🔒</div>
+        <div>
+          <h2>Encode Message</h2>
+          <p>Turn your message into a tiny secret code</p>
+        </div>
+      </div>
+
+      <textarea
+        id="encodeInput"
+        placeholder="Type your secret message here..."
+      ></textarea>
+
+      <div class="action-row">
+        <button class="btn" id="encodeBtn">
+          🔒 Encode Message
+        </button>
+        <button class="btn secondary" id="clearEncode">
+          Clear
+        </button>
+      </div>
+
+      <div class="copy-row">
+        <div class="copy-box" id="encodedOutput">
+          Your secret code will appear here...
+        </div>
+
+        <button class="copy-btn" id="copyBtn">
+          Copy
+        </button>
+      </div>
+
+      <div class="status" id="encodeStatus"></div>
+
+    </section>
+
+
+    <!-- DECODE -->
+
+    <section class="panel">
+
+      <div class="panel-title">
+        <div class="panel-icon">🔓</div>
+        <div>
+          <h2>Reveal Message</h2>
+          <p>Paste a secret emoji code to reveal it</p>
+        </div>
+      </div>
+
+      <textarea
+        class="code-input"
+        id="decodeInput"
+        placeholder="Paste your secret code here..."
+      ></textarea>
+
+      <div class="action-row">
+        <button class="btn" id="decodeBtn">
+          🔓 Reveal Message
+        </button>
+        <button class="btn secondary" id="clearDecode">
+          Clear
+        </button>
+      </div>
+
+      <div id="decodeResult" class="result empty">
+        Your revealed message will appear here...
+      </div>
+
+      <div class="status" id="decodeStatus"></div>
+
+    </section>
+
+  </main>
+
+
+  <section class="info">
+
+    <div class="info-card">
+      <strong>Ultra-Short Payload</strong>
+      <span>
+        Long messages are stored locally and represented by a compact
+        emoji + secret ID.
+      </span>
+    </div>
+
+    <div class="info-card">
+      <strong>100+ Emojis</strong>
+      <span>
+        Choose from organized Smilies, Expressions, Secret Symbols
+        and Objects.
+      </span>
+    </div>
+
+    <div class="info-card">
+      <strong>Private by Design</strong>
+      <span>
+        No server is required. Your message stays inside this browser's
+        local storage.
+      </span>
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- EMOJI PICKER -->
+
+<div class="modal" id="emojiModal">
+
+  <div class="emoji-tray">
+
+    <div class="tray-head">
+      <strong>Choose Your Secret Emoji</strong>
+      <button class="close" id="closeModal">×</button>
+    </div>
+
+    <input
+      id="emojiSearch"
+      class="emoji-search"
+      placeholder="Search emoji..."
+      autocomplete="off"
+    >
+
+    <div class="category-bar">
+
+      <button class="cat active" data-category="All">All</button>
+      <button class="cat" data-category="Smilies">Smilies</button>
+      <button class="cat" data-category="Expressions">Expressions</button>
+      <button class="cat" data-category="Secret">Secret</button>
+      <button class="cat" data-category="Objects">Objects</button>
+      <button class="cat" data-category="Symbols">Symbols</button>
+
+    </div>
+
+    <div id="emojiGrid" class="emoji-grid"></div>
+
+  </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+"use strict";
+
+/* =========================================================
+   3D SECRET EMOJI DATABASE
+   ========================================================= */
+
+const emojiGroups = {
+
+  Smilies: [
+    "😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇",
+    "🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚",
+    "😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🤩",
+    "🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣",
+    "😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬"
+  ],
+
+  Expressions: [
+    "🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗",
+    "🤔","🫡","🤭","🤫","🤥","😶","🫢","🫣","😐","😑",
+    "😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤",
+    "😪","😵","🤐","🤢","🤮","🤧","😷","🤒","🤕","👽",
+    "👻","💀","☠️","👹","👺","🤡","💩","😈","👿","🤖"
+  ],
+
+  Secret: [
+    "🥷","🕵️","🫥","🤫","🔐","🔒","🔓","🗝️","🗝","🕶️",
+    "🎭","🪄","✨","🌑","🌒","🌓","🌔","🌕","🌚","🌙",
+    "⭐","🌟","💫","⚡","🔥","🖤","🩶","💜","💙","❤️",
+    "🩷","💚","🩵","🧿","👁️","👁️‍🗨️","🌀","♾️","🔮","🪬"
+  ],
+
+  Objects: [
+    "📱","💻","⌨️","🖥️","📷","🎥","🎧","🎤","📡","💡",
+    "🔦","📚","📖","📝","✏️","🖊️","📌","📍","📦","🎁",
+    "💎","💰","🪙","🔑","🧩","🎮","🕹️","🎲","🎯","🏆",
+    "🚀","🛸","🪐","🌍","🌎","🌏","☄️","🧪","⚗️","🧬"
+  ],
+
+  Symbols: [
+    "❤️","💔","❣️","💕","💞","💓","💗","💖","💘","💝",
+    "💟","☮️","✝️","☯️","⚛️","☢️","☣️","⚠️","🚫","⛔",
+    "❌","⭕","✅","✔️","❗","❓","⁉️","‼️","⁇","🔴",
+    "🟠","🟡","🟢","🔵","🟣","⚫","⚪","🟤","🔺","🔻"
+  ]
+};
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const mainEmoji = document.getElementById("mainEmoji");
+const modal = document.getElementById("emojiModal");
+const emojiGrid = document.getElementById("emojiGrid");
+const emojiSearch = document.getElementById("emojiSearch");
+
+const encodeInput = document.getElementById("encodeInput");
+const encodedOutput = document.getElementById("encodedOutput");
+const encodeStatus = document.getElementById("encodeStatus");
+
+const decodeInput = document.getElementById("decodeInput");
+const decodeResult = document.getElementById("decodeResult");
+const decodeStatus = document.getElementById("decodeStatus");
+
+const toast = document.getElementById("toast");
+
+let selectedCategory = "All";
+let selectedEmoji = "🥷";
+
+
+/* =========================================================
+   EMOJI PICKER
+   ========================================================= */
+
+function getAllEmojis(){
+  return Object.entries(emojiGroups).flatMap(([category, emojis]) =>
+    emojis.map(emoji => ({emoji, category}))
+  );
+}
+
+function renderEmojiGrid(){
+
+  const search = emojiSearch.value.trim().toLowerCase();
+
+  let items = getAllEmojis();
+
+  if(selectedCategory !== "All"){
+    items = items.filter(item => item.category === selectedCategory);
+  }
+
+  /*
+    Emoji characters themselves cannot always be searched by name
+    without a large name database. Search also accepts category.
+  */
+  if(search){
+    items = items.filter(item =>
+      item.emoji.includes(search) ||
+      item.category.toLowerCase().includes(search)
+    );
+  }
+
+  emojiGrid.innerHTML = "";
+
+  items.forEach(item => {
+
+    const button = document.createElement("button");
+
+    button.className = "emoji-item";
+    button.type = "button";
+    button.textContent = item.emoji;
+    button.title = item.category;
+
+    button.addEventListener("click", () => {
+
+      selectedEmoji = item.emoji;
+      mainEmoji.textContent = selectedEmoji;
+
+      closeEmojiPicker();
+
+      showToast("Emoji selected: " + selectedEmoji);
+
+    });
+
+    emojiGrid.appendChild(button);
+
+  });
+}
+
+
+document.querySelectorAll(".cat").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    document.querySelectorAll(".cat")
+      .forEach(item => item.classList.remove("active"));
+
+    button.classList.add("active");
+
+    selectedCategory = button.dataset.category;
+
+    renderEmojiGrid();
+
+  });
+
+});
+
+
+emojiSearch.addEventListener("input", renderEmojiGrid);
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+function openEmojiPicker(){
+
+  modal.classList.add("show");
+
+  setTimeout(() => emojiSearch.focus(),100);
+
+}
+
+function closeEmojiPicker(){
+
+  modal.classList.remove("show");
+  emojiSearch.value = "";
+
+}
+
+document
+  .getElementById("chooseEmoji")
+  .addEventListener("click", openEmojiPicker);
+
+document
+  .getElementById("closeModal")
+  .addEventListener("click", closeEmojiPicker);
+
+modal.addEventListener("click", event => {
+
+  if(event.target === modal){
+    closeEmojiPicker();
+  }
+
+});
+
+document.addEventListener("keydown", event => {
+
+  if(event.key === "Escape"){
+    closeEmojiPicker();
+  }
+
+});
+
+
+/* =========================================================
+   SHORT ID GENERATOR
+   ========================================================= */
+
+function generateShortId(){
+
+  const chars =
+    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  let id = "";
+
+  for(let i=0;i<3;i++){
+    id += chars[Math.floor(Math.random() * chars.length)];
+  }
+
+  return id;
+
+}
+
+
+function createUniqueId(){
+
+  let id;
+
+  do{
+    id = generateShortId();
+  }
+  while(localStorage.getItem("emojiSecret_" + id));
+
+  return id;
+}
+
+
+/* =========================================================
+   SAVE MESSAGE
+   ========================================================= */
+
+function saveMessage(id, message){
+
+  const data = {
+    message: message,
+    emoji: selectedEmoji,
+    createdAt: Date.now()
+  };
+
+  localStorage.setItem(
+    "emojiSecret_" + id,
+    JSON.stringify(data)
+  );
+
+}
+
+
+/* =========================================================
+   ENCODE
+   ========================================================= */
+
+document
+  .getElementById("encodeBtn")
+  .addEventListener("click", () => {
+
+    const message = encodeInput.value;
+
+    if(!message.trim()){
+
+      encodeStatus.textContent =
+        "Please enter a message first.";
+
+      return;
+    }
+
+    const id = createUniqueId();
+
+    saveMessage(id,message);
+
+    const payload =
+      selectedEmoji + " [#" + id + "]";
+
+    encodedOutput.textContent = payload;
+
+    encodeStatus.textContent =
+      "Secret payload created successfully.";
+
+    showToast("Message encoded");
+
+  });
+
+
+/* =========================================================
+   COPY
+   ========================================================= */
+
+document
+  .getElementById("copyBtn")
+  .addEventListener("click", async () => {
+
+    const text = encodedOutput.textContent;
+
+    if(
+      !text ||
+      text === "Your secret code will appear here..."
+    ){
+
+      showToast("Encode a message first.");
+      return;
+
+    }
+
+    try{
+
+      await navigator.clipboard.writeText(text);
+
+    }catch{
+
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      temp.remove();
+
+    }
+
+    const button = document.getElementById("copyBtn");
+
+    button.textContent = "Copied!";
+    button.classList.add("copied");
+
+    setTimeout(() => {
+
+      button.textContent = "Copy";
+      button.classList.remove("copied");
+
+    },1500);
+
+    showToast("Secret code copied");
+
+  });
+
+
+/* =========================================================
+   DECODE
+   ========================================================= */
+
+document
+  .getElementById("decodeBtn")
+  .addEventListener("click", () => {
+
+    const code = decodeInput.value.trim();
+
+    if(!code){
+
+      decodeStatus.textContent =
+        "Paste a secret code first.";
+
+      return;
+    }
+
+    /*
+      Accept:
+      🥷 [#ABC]
+      [#ABC]
+      Anything containing [#ABC]
+    */
+
+    const match = code.match(/\[#([A-Z0-9]{3})\]/i);
+
+    if(!match){
+
+      decodeResult.classList.remove("empty");
+
+      decodeResult.textContent =
+        "Invalid secret code format.";
+
+      decodeStatus.textContent =
+        "Expected format like 🥷 [#A7K].";
+
+      return;
+    }
+
+    const id = match[1].toUpperCase();
+
+    const raw =
+      localStorage.getItem("emojiSecret_" + id);
+
+    if(!raw){
+
+      decodeResult.classList.remove("empty");
+
+      decodeResult.textContent =
+        "No message found for this secret code.";
+
+      decodeStatus.textContent =
+        "This code may have been created on another browser/device or deleted.";
+
+      return;
+    }
+
+    try{
+
+      const data = JSON.parse(raw);
+
+      decodeResult.classList.remove("empty");
+      decodeResult.textContent = data.message;
+
+      decodeStatus.textContent =
+        "Message revealed successfully.";
+
+      if(data.emoji){
+        mainEmoji.textContent = data.emoji;
+        selectedEmoji = data.emoji;
+      }
+
+      showToast("Secret message revealed");
+
+    }catch{
+
+      decodeResult.classList.remove("empty");
+      decodeResult.textContent =
+        "Unable to read this secret code.";
+
+    }
+
+  });
+
+
+/* =========================================================
+   CLEAR BUTTONS
+   ========================================================= */
+
+document
+  .getElementById("clearEncode")
+  .addEventListener("click", () => {
+
+    encodeInput.value = "";
+    encodedOutput.textContent =
+      "Your secret code will appear here...";
+    encodeStatus.textContent = "";
+
+  });
+
+
+document
+  .getElementById("clearDecode")
+  .addEventListener("click", () => {
+
+    decodeInput.value = "";
+
+    decodeResult.classList.add("empty");
+
+    decodeResult.textContent =
+      "Your revealed message will appear here...";
+
+    decodeStatus.textContent = "";
+
+  });
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+let toastTimer;
+
+function showToast(message){
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => {
+
+    toast.classList.remove("show");
+
+  },1800);
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+renderEmojiGrid();
+
+</script>
+
+</body>
+</html>
